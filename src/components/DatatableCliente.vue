@@ -37,7 +37,7 @@
             title="Editar"
             variant="link"
             size="sm"
-            @click="onEdit(row.item._id)"
+            @click="onEdit(row.item.id)"
           >
             <font-awesome-icon icon="pen" />
           </b-button>
@@ -46,7 +46,7 @@
             title="Excluir"
             variant="link"
             size="sm"
-            @click="onDelete(row.item._id)"
+            @click="onDelete(row.item.id)"
           >
             <font-awesome-icon icon="xmark" />
           </b-button>
@@ -187,8 +187,8 @@ export default {
     },
     async onSubmit() {
       try {
-        if (this.form._id)
-          await this.updateCliente({ ...this.form, id: this.form._id });
+        if (this.form.id)
+          await this.updateCliente({ ...this.form, id: this.form.id });
         else await this.insertCliente(this.form);
         this.$noty.success("Operação concluída com sucesso.");
       } catch (err) {
