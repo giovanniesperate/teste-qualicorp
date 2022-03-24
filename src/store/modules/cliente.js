@@ -35,21 +35,21 @@ const actions = {
     const { data } = await axios.get(`/cliente/${id}`);
     return data;
   },
-  async insertCliente({}, { nome, email, cpf, telefone }) {
+  async insertCliente({}, { nome, email, cpf, telefoneList }) {
     const { data } = await axios.post("/cliente", {
       nome,
       email,
       cpf,
-      telefone,
+      telefoneList,
     });
     return data;
   },
-  async updateCliente({}, { id, nome, email, cpf, telefone }) {
+  async updateCliente({}, { id, nome, email, cpf, telefoneList }) {
     return await axios.put(`/cliente/${id}`, {
       nome,
       email,
       cpf,
-      telefone,
+      telefoneList,
     });
   },
   async deleteCliente({}, { id }) {

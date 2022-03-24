@@ -31,6 +31,11 @@
               : column.toUpperCase()
           }}
         </template>
+        <template #cell(telefones)="row">
+          {{ row.item.celular ? row.item.celular : "" }}
+          {{ row.item.residencial ? row.item.residencial : "" }}
+          {{ row.item.comercial ? row.item.comercial : "" }}
+        </template>
         <template #cell(acoes)="row">
           <b-button
             v-b-tooltip.hover
@@ -114,13 +119,42 @@
             </b-form-group>
           </b-col>
           <b-col cols="6">
-            <b-form-group label="Telefone:" label-for="telefone">
+            <b-form-group label="Celular:" label-for="celular">
               <b-form-input
-                id="telefone"
-                v-model="form.telefone"
+                id="celular"
+                v-model="form.celular"
                 type="tel"
-                name="telefone"
-                placeholder="Digite o telefone"
+                name="celular"
+                placeholder="Digite o celular"
+                v-mask="['(##) #####-####']"
+                required
+              />
+            </b-form-group>
+          </b-col>
+        </b-row>
+
+        <b-row>
+          <b-col cols="6">
+            <b-form-group label="Telefone residencial:" label-for="residencial">
+              <b-form-input
+                id="residencial"
+                v-model="form.residencial"
+                type="tel"
+                name="residencial"
+                placeholder="Digite o tel. residencial"
+                v-mask="['(##) ####-####']"
+                required
+              />
+            </b-form-group>
+          </b-col>
+          <b-col>
+            <b-form-group label="Telefone comercial:" label-for="comercial">
+              <b-form-input
+                id="comercial"
+                v-model="form.comercial"
+                type="tel"
+                name="comercial"
+                placeholder="Digite o tel. comercial"
                 v-mask="['(##) ####-####']"
                 required
               />
@@ -149,7 +183,7 @@ export default {
     return {
       currentPage: 1,
       perPage: 5,
-      fields: ["nome", "email", "cpf", "telefone", "acoes"],
+      fields: ["nome", "email", "cpf", "telefones", "acoes"],
       form: {},
       showForm: false,
     };
@@ -187,9 +221,20 @@ export default {
     },
     async onSubmit() {
       try {
-        if (this.form.id)
-          await this.updateCliente({ ...this.form, id: this.form.id });
-        else await this.insertCliente(this.form);
+        const telefoneList = {
+          residencial: this.form.residencial,
+          comercial: this.form.comercial,
+          celular: this.form.celular,
+        };
+
+        const formData = {
+          ...this.form,
+          id: this.form.id ? this.form.id : null,
+          telefoneList,
+        };
+
+        if (formData.id) await this.updateCliente(formData);
+        else await this.insertCliente(formData);
         this.$noty.success("Operação concluída com sucesso.");
       } catch (err) {
         console.log(err);
