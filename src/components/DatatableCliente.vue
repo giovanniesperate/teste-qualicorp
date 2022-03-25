@@ -32,9 +32,9 @@
           }}
         </template>
         <template #cell(telefones)="row">
-          {{ row.item.celular ? row.item.celular : "" }}
-          {{ row.item.residencial ? row.item.residencial : "" }}
-          {{ row.item.comercial ? row.item.comercial : "" }}
+          <span v-for="(item, key) in row.item.telefoneList" :key="key">
+            {{ item.num }}
+          </span>
         </template>
         <template #cell(acoes)="row">
           <b-button
@@ -91,6 +91,22 @@
             </b-form-group>
           </b-col>
           <b-col cols="6">
+            <b-form-group label="CPF:" label-for="cpf">
+              <b-form-input
+                id="cpf"
+                v-model="form.cpf"
+                type="text"
+                name="cpf"
+                placeholder="Digite o CPF"
+                v-mask="['###.###.###-##']"
+                required
+              />
+            </b-form-group>
+          </b-col>
+        </b-row>
+
+        <b-row class="mb-3">
+          <b-col>
             <b-form-group label="E-mail:" label-for="email">
               <b-form-input
                 id="email"
@@ -105,24 +121,15 @@
         </b-row>
 
         <b-row class="mb-3">
-          <b-col cols="6">
-            <b-form-group label="CPF:" label-for="cpf">
-              <b-form-input
-                id="cpf"
-                v-model="form.cpf"
-                type="text"
-                name="cpf"
-                placeholder="Digite o CPF"
-                v-mask="['###.###.###-##']"
-                required
-              />
-            </b-form-group>
-          </b-col>
-          <b-col cols="6">
-            <b-form-group label="Celular:" label-for="celular">
+          <b-col v-for="(item, key) in form.telefoneList" :key="key">
+            <b-form-group
+              v-if="item.tipo == 'celular'"
+              label="Celular:"
+              label-for="celular"
+            >
               <b-form-input
                 id="celular"
-                v-model="form.celular"
+                v-model="item.num"
                 type="tel"
                 name="celular"
                 placeholder="Digite o celular"
@@ -130,15 +137,14 @@
                 required
               />
             </b-form-group>
-          </b-col>
-        </b-row>
-
-        <b-row>
-          <b-col cols="6">
-            <b-form-group label="Telefone residencial:" label-for="residencial">
+            <b-form-group
+              v-if="item.tipo == 'residencial'"
+              label="Telefone residencial:"
+              label-for="residencial"
+            >
               <b-form-input
                 id="residencial"
-                v-model="form.residencial"
+                v-model="item.num"
                 type="tel"
                 name="residencial"
                 placeholder="Digite o tel. residencial"
@@ -146,12 +152,14 @@
                 required
               />
             </b-form-group>
-          </b-col>
-          <b-col>
-            <b-form-group label="Telefone comercial:" label-for="comercial">
+            <b-form-group
+              v-if="item.tipo == 'comercial'"
+              label="Telefone comercial:"
+              label-for="comercial"
+            >
               <b-form-input
                 id="comercial"
-                v-model="form.comercial"
+                v-model="item.num"
                 type="tel"
                 name="comercial"
                 placeholder="Digite o tel. comercial"
@@ -161,7 +169,6 @@
             </b-form-group>
           </b-col>
         </b-row>
-
         <div class="btn-right mt-3">
           <b-button variant="danger" @click="showForm = false">
             FECHAR
@@ -208,7 +215,22 @@ export default {
     ]),
     onNovo() {
       this.showForm = true;
-      this.form = {};
+      this.form = {
+        telefoneList: [
+          {
+            tipo: "celular",
+            num: "",
+          },
+          {
+            tipo: "residencial",
+            num: "",
+          },
+          {
+            tipo: "comercial",
+            num: "",
+          },
+        ],
+      };
     },
     async onEdit(id) {
       try {
@@ -221,16 +243,9 @@ export default {
     },
     async onSubmit() {
       try {
-        const telefoneList = {
-          residencial: this.form.residencial,
-          comercial: this.form.comercial,
-          celular: this.form.celular,
-        };
-
         const formData = {
           ...this.form,
           id: this.form.id ? this.form.id : null,
-          telefoneList,
         };
 
         if (formData.id) await this.updateCliente(formData);
