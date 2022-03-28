@@ -42,7 +42,7 @@
             title="Editar"
             variant="link"
             size="sm"
-            @click="onEdit(row.item.id)"
+            @click="onEdit(row.item.guid)"
           >
             <font-awesome-icon icon="pen" />
           </b-button>
@@ -51,7 +51,7 @@
             title="Excluir"
             variant="link"
             size="sm"
-            @click="onDelete(row.item.id)"
+            @click="onDelete(row.item.guid)"
           >
             <font-awesome-icon icon="xmark" />
           </b-button>
@@ -232,9 +232,9 @@ export default {
         ],
       };
     },
-    async onEdit(id) {
+    async onEdit(guid) {
       try {
-        this.form = await this.getClienteById({ id });
+        this.form = await this.getClienteById({ guid });
         this.showForm = true;
       } catch (err) {
         console.log(err);
@@ -245,10 +245,10 @@ export default {
       try {
         const formData = {
           ...this.form,
-          id: this.form.id ? this.form.id : null,
+          guid: this.form.guid ? this.form.guid : null,
         };
 
-        if (formData.id) await this.updateCliente(formData);
+        if (formData.guid) await this.updateCliente(formData);
         else await this.insertCliente(formData);
         this.$noty.success("Operação concluída com sucesso.");
       } catch (err) {
@@ -259,9 +259,9 @@ export default {
         this.showForm = false;
       }
     },
-    async onDelete(id) {
+    async onDelete(guid) {
       try {
-        await this.deleteCliente({ id });
+        await this.deleteCliente({ guid });
         this.$noty.success("Excluído com sucesso.");
       } catch (err) {
         console.log(err);
