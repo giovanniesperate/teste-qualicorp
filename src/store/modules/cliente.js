@@ -28,7 +28,7 @@ const actions = {
   },
   async getClienteList({ commit }) {
     const { data } = await axios.get("/cliente");
-    commit("setClienteList", data);
+    commit("setClienteList", data.data);
     return data;
   },
   async getClienteById({}, { guid }) {
@@ -45,12 +45,13 @@ const actions = {
     return data;
   },
   async updateCliente({}, { guid, nome, email, cpf, telefoneList }) {
-    return await axios.put(`/cliente/${guid}`, {
+    const { data } = await axios.put(`/cliente/${guid}`, {
       nome,
       email,
       cpf,
       telefoneList,
     });
+    return data;
   },
   async deleteCliente({}, { guid }) {
     const { data } = await axios.delete(`/cliente/${guid}`);

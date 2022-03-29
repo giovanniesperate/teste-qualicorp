@@ -234,7 +234,8 @@ export default {
     },
     async onEdit(guid) {
       try {
-        this.form = await this.getClienteById({ guid });
+        const { data } = await this.getClienteById({ guid });
+        this.form = data;
         this.showForm = true;
       } catch (err) {
         console.log(err);
@@ -243,14 +244,21 @@ export default {
     },
     async onSubmit() {
       try {
+        let r = {};
+
         const formData = {
           ...this.form,
           guid: this.form.guid ? this.form.guid : null,
         };
 
-        if (formData.guid) await this.updateCliente(formData);
-        else await this.insertCliente(formData);
-        this.$noty.success("Operação concluída com sucesso.");
+        if (formData.guid) r = await this.updateCliente(formData);
+        else r = await this.insertCliente(formData);
+
+        this.$noty.success(
+          r.status == 200
+            ? "Operação concluída com sucesso."
+            : "Não foi possível completar a operação."
+        );
       } catch (err) {
         console.log(err);
         this.$noty.error("Erro ao completar a operação.");
@@ -261,8 +269,12 @@ export default {
     },
     async onDelete(guid) {
       try {
-        await this.deleteCliente({ guid });
-        this.$noty.success("Excluído com sucesso.");
+        const r = await this.deleteCliente({ guid });
+        this.$noty.success(
+          r.status == 200
+            ? "Excluído com sucesso."
+            : "Não foi possível completar a exclusão."
+        );
       } catch (err) {
         console.log(err);
         this.$noty.error("Erro ao excluir.");
